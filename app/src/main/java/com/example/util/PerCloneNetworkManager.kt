@@ -130,7 +130,7 @@ object PerCloneNetworkManager {
      */
     fun getOrCreateConfig(profileId: String): CloneProxyConfig {
         return profileConfigs.computeIfAbsent(profileId) { id ->
-            val preset = when (id.hashCode() % 5) {
+            val preset = when (Math.floorMod(id.hashCode(), 5)) {
                 0 -> NetworkPreset.NEW_YORK
                 1 -> NetworkPreset.LONDON
                 2 -> NetworkPreset.TOKYO

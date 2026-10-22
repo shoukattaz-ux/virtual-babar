@@ -38,7 +38,7 @@ data class InterceptedHardwareParameters(
  * Process-Level Virtual Hooking & Sandbox Interceptor Framework:
  *
  * Implements end-to-end process-level hardware spoofing across:
- *  1. Native Layer: PLT/GOT interception of libc __system_property_get (NativePropertyHook)
+ *  1. Property Layer: in-memory system property overlay (NativePropertyHook)
  *  2. Framework Layer: android.os.Build fields (BOARD, BRAND, DEVICE, DISPLAY, FINGERPRINT, HARDWARE, MANUFACTURER, MODEL, PRODUCT, SERIAL)
  *  3. IPC/Binder Layer: ServiceManager.sCache dynamic proxy for iphonesubinfo and wifi (SystemServiceHookManager)
  *  4. Provider Layer: Settings.Secure.ANDROID_ID and NameValueCache interception

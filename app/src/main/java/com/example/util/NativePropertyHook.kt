@@ -1,54 +1,20 @@
 package com.example.util
 
-import android.util.Log
 import com.example.data.model.ProfileEntity
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Process-Level Native System Property Hook Bridge:
+ * In-memory system property overlay for the active container profile.
  *
- * Intercepts low-level native system property calls (__system_property_get, getprop)
- * that target apps execute directly to bypass Java reflection.
- *
- * Bridges Kotlin sandbox configuration to JNI C++ PLT/GOT hooks, with automatic
- * resilient fallback to in-memory property mapping and SystemProperties reflection.
+ * Values set here are only visible to code in this app that reads properties through
+ * [VirtualHookManager.getSystemProperty]. Other apps always read the real device properties.
  */
 object NativePropertyHook {
 
-    private const val TAG = "NativePropertyHook"
-    private var isNativeLibLoaded = false
     private val memoryPropertyStore = ConcurrentHashMap<String, String>()
 
-    init {
-        try {
-            System.loadLibrary("virtuos_hook")
-            isNativeLibLoaded = true
-            initNativeHook()
-            Log.i(TAG, "libvirtuos_hook loaded and PLT interception initialized.")
-        } catch (_: Throwable) {
-            isNativeLibLoaded = false
-            Log.w(TAG, "libvirtuos_hook not bundled or NDK build skipped; using JVM-level property proxy bridge.")
-        }
-    }
-
-    // JNI Native methods (implemented in sysprop_hook.cpp)
-    @JvmStatic
-    private external fun initNativeHook(): Boolean
-
-    @JvmStatic
-    private external fun setSpoofedProperty(key: String, value: String)
-
-    @JvmStatic
-    private external fun clearSpoofedProperties()
-
-    @JvmStatic
-    private external fun getNativeProperty(key: String, def: String): String
-
-    @JvmStatic
-    private external fun isNativeHookActive(): Boolean
-
     /**
-     * Injects a full set of spoofed system properties for the given ProfileEntity.
+     * Stores the full set of profile system properties for the given ProfileEntity.
      */
     fun setProfileProperties(profile: ProfileEntity) {
         val modelNormalized = profile.deviceModel.replace(" ", "_").lowercase()
@@ -78,68 +44,32 @@ object NativePropertyHook {
     }
 
     /**
-     * Sets an individual spoofed system property.
+     * Sets an individual profile property.
      */
     fun setProperty(key: String, value: String) {
         memoryPropertyStore[key] = value
-        if (isNativeLibLoaded) {
-            try {
-                setSpoofedProperty(key, value)
-            } catch (e: Throwable) {
-                Log.e(TAG, "Failed to call native setSpoofedProperty for $key: ${e.message}")
-            }
-        }
     }
 
     /**
-     * Reads a system property, returning the spoofed value if registered.
+     * Reads a profile property, returning [default] if it is not set.
      */
-    fun getProperty(key: String, default: String = ""): String {
-        val inMemory = memoryPropertyStore[key]
-        if (inMemory != null) {
-            return inMemory
-        }
-        if (isNativeLibLoaded) {
-            try {
-                return getNativeProperty(key, default)
-            } catch (_: Throwable) {
-                // Ignore fallback
-            }
-        }
-        return default
-    }
+    fun getProperty(key: String, default: String = ""): String =
+        memoryPropertyStore[key] ?: default
 
     /**
-     * Clears all spoofed properties and resets hooks.
+     * Clears all profile properties.
      */
     fun clear() {
         memoryPropertyStore.clear()
-        if (isNativeLibLoaded) {
-            try {
-                clearSpoofedProperties()
-            } catch (_: Throwable) {
-                // Ignore fallback
-            }
-        }
     }
 
     /**
-     * Checks if the native PLT hook is loaded and active.
+     * There is no native hook; kept so diagnostics can report the layer as inactive.
      */
-    fun isNativeActive(): Boolean {
-        return if (isNativeLibLoaded) {
-            try {
-                isNativeHookActive()
-            } catch (_: Throwable) {
-                false
-            }
-        } else {
-            false
-        }
-    }
+    fun isNativeActive(): Boolean = false
 
     /**
-     * Returns an unmodifiable copy of the currently spoofed properties map.
+     * Returns an unmodifiable copy of the current profile properties map.
      */
     fun getActiveProperties(): Map<String, String> = HashMap(memoryPropertyStore)
 }

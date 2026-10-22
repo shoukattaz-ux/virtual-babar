@@ -638,7 +638,7 @@ fun DeviceInfoHwContainerApp(
                     ) {
                         Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null, tint = CyberAmber, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Dispatch Native Host Package (Hooked)", color = CyberAmber)
+                        Text("Open Real App (uses real device values)", color = CyberAmber)
                     }
                 }
             }
@@ -1066,7 +1066,7 @@ fun GenericVirtualContainerApp(
                     shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, CyberAmber)
                 ) {
-                    Text("Launch Host Native APK (Hooked)", color = CyberAmber)
+                    Text("Open Real App (uses real device values)", color = CyberAmber)
                 }
             }
         }
@@ -1129,7 +1129,7 @@ fun ContainerTelemetryView(
                         }
                         Column {
                             Text(
-                                text = "100% HARDWARE ISOLATION ACTIVE",
+                                text = "PROFILE PREVIEW MODE",
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = CyberEmerald,
@@ -1137,7 +1137,7 @@ fun ContainerTelemetryView(
                                 )
                             )
                             Text(
-                                text = "System Property Interceptor & Virtual Context Wrapper Hooked",
+                                text = "Showing the values this profile would report",
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontSize = 11.sp,
                                     color = TextSecondaryDark
@@ -1147,7 +1147,7 @@ fun ContainerTelemetryView(
                     }
 
                     Text(
-                        text = "Target app '$appName' is executing inside an isolated container. All calls to android.os.Build, Settings.Secure.ANDROID_ID, and internal storage are dynamically intercepted and redirected.",
+                        text = "Previewing how '$appName' would see the ${profile.deviceBrand} ${profile.deviceModel} profile. Opening the real app launches it normally, outside this container, so it reads your real device values.",
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontSize = 12.sp,
                             color = TextMutedDark,
@@ -1336,7 +1336,7 @@ fun ContainerTelemetryView(
                         ) {
                             Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null, tint = CyberAmber, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "Dispatch Native App with Injected Extras", color = CyberAmber, fontWeight = FontWeight.Medium)
+                            Text(text = "Open Real App (uses real device values)", color = CyberAmber, fontWeight = FontWeight.Medium)
                         }
                     }
 
