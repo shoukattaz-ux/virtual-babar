@@ -1,0 +1,6 @@
+{
+  "name": "VirtualSpace",
+  "description": "Virtual Android space with isolated app containers, device profile randomizer, sandboxed storage, Option 3 Sensor & Behavioral Shield, and Option 5 Per-Clone Network Shifter & Zero-Leak Kill-Switch.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
